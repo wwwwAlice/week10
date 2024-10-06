@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Combined Visualization: CPI Data and Bushfire Incidents by State</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+
+  <h1>Combined Visualization: CPI Data and Bushfire Incidents by State</h1>
+
+  <!-- CPI Data Visualization -->
+  <h2>CPI Data: Australia and New Zealand (2018-2022)</h2>
+  <div id="cpi_vis"></div>
+
+  <!-- Bushfire Incidents Visualization with State Filter -->
+  <h2>Bushfire Incidents in Australia (2010-2020) by State</h2>
+  <div id="bushfire_vis"></div>
+
+  <!-- CPI Visualization Script -->
+  <script type="text/javascript">
+    var cpiSpec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "description": "CPI in Australia and New Zealand (2018-2022) with a dropdown filter",
+      "width": 800,
+      "height": 450,
+      "data": {
+        "values": [
+          {"Country": "Australia", "Year": "2018", "CPI": 112.1},
+          {"Country": "Australia", "Year": "2019", "CPI": 113.5},
+          {"Country": "Australia", "Year": "2020", "CPI": 114.2},
+          {"Country": "Australia", "Year": "2021", "CPI": 115.8},
+          {"Country": "Australia", "Year": "2022", "CPI": 117.6},
+          {"Country": "New Zealand", "Year": "2018", "CPI": 102.3},
+          {"Country": "New Zealand", "Year": "2019", "CPI": 103.7},
+          {"Country": "New Zealand", "Year": "2020", "CPI": 104.6},
+          {"Country": "New Zealand", "Year": "2021", "CPI": 106.2},
+          {"Country": "New Zealand", "Year": "2022", "CPI": 107.9}
+        ]
+      },
+      "params": [
+        {
+          "name": "country_filter",
+          "value": "All",
+          "bind": {
+            "input": "select",
+            "options": ["All", "Australia", "New Zealand"],
+            "name": "Filter by Country"
+          }
+        }
+      ],
+      "transform": [
+        {
+          "filter": "country_filter === 'All' || datum.Country === country_filter"
+        }
+      ],
+      "vconcat": [
+        {
+          "mark": "bar",
+          "encoding": {
+            "x": {
+              "field": "Year",
+              "type": "ordinal",
+              "axis": {"title": "Year"}
+            },
+            "y": {
+              "field": "CPI",
+              "type": "quantitative",
+              "axis": {"title": "CPI"}
+            },
+            "color": {
+              "field": "Country",
+              "type": "nominal",
+              "legend": {"title": "Country"}
+            }
+          }
+        },
+        {
+          "mark": "bar",
+          "params": [
+            {
+              "name": "brush",
+              "select": {"type": "interval", "encodings": ["x"]}
+            }
+          ],
+          "encoding": {
+            "x": {
+              "field": "Year",
+              "type": "ordinal",
+              "axis": {"title": "Year"},
+              "scale": {"domain": {"param": "brush"}}
+            },
+            "y": {
+              "field": "CPI",
+              "type": "quantitative",
+              "axis": {"title": "CPI", "tickCount": 3, "grid": false}
+            },
+            "color": {
+              "field": "Country",
+              "type": "nominal"
+            }
+          }
+        }
+      ]
+    };
+
+    vegaEmbed('#cpi_vis', cpiSpec).then(function(result) {
+      console.log(result);
+    }).catch(console.error);
+  </script>
+
+  <!-- Bushfire Incidents Line Chart Script with State Filter and Year Labels -->
+  <script type="text/javascript">
+    var bushfireSpec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 800,
+      "height": 450,
+      "description": "Bushfire Incidents in Australia (2010-2020) by State",
+      "data": {
+        "values": [
+          {"Year": 2010, "State": "VIC", "Bushfires": 150},
+          {"Year": 2011, "State": "VIC", "Bushfires": 175},
+          {"Year": 2012, "State": "VIC", "Bushfires": 130},
+          {"Year": 2013, "State": "VIC", "Bushfires": 190},
+          {"Year": 2014, "State": "VIC", "Bushfires": 170},
+          {"Year": 2015, "State": "VIC", "Bushfires": 210},
+          {"Year": 2016, "State": "VIC", "Bushfires": 200},
+          {"Year": 2017, "State": "VIC", "Bushfires": 220},
+          {"Year": 2018, "State": "VIC", "Bushfires": 180},
+          {"Year": 2019, "State": "VIC", "Bushfires": 230},
+          {"Year": 2020, "State": "VIC", "Bushfires": 250},
+          {"Year": 2010, "State": "NSW", "Bushfires": 100},
+          {"Year": 2011, "State": "NSW", "Bushfires": 110},
+          {"Year": 2012, "State": "NSW", "Bushfires": 125},
+          {"Year": 2013, "State": "NSW", "Bushfires": 150},
+          {"Year": 2014, "State": "NSW", "Bushfires": 160},
+          {"Year": 2015, "State": "NSW", "Bushfires": 170},
+          {"Year": 2016, "State": "NSW", "Bushfires": 180},
+          {"Year": 2017, "State": "NSW", "Bushfires": 190},
+          {"Year": 2018, "State": "NSW", "Bushfires": 200},
+          {"Year": 2019, "State": "NSW", "Bushfires": 210},
+          {"Year": 2020, "State": "NSW", "Bushfires": 220},
+          {"Year": 2010, "State": "SA", "Bushfires": 90},
+          {"Year": 2011, "State": "SA", "Bushfires": 95},
+          {"Year": 2012, "State": "SA", "Bushfires": 100},
+          {"Year": 2013, "State": "SA", "Bushfires": 110},
+          {"Year": 2014, "State": "SA", "Bushfires": 120},
+          {"Year": 2015, "State": "SA", "Bushfires": 125},
+          {"Year": 2016, "State": "SA", "Bushfires": 130},
+          {"Year": 2017, "State": "SA", "Bushfires": 140},
+          {"Year": 2018, "State": "SA", "Bushfires": 150},
+          {"Year": 2019, "State": "SA", "Bushfires": 155},
+          {"Year": 2020, "State": "SA", "Bushfires": 160},
+          {"Year": 2010, "State": "WA", "Bushfires": 200},
+          {"Year": 2011, "State": "WA", "Bushfires": 210},
+          {"Year": 2012, "State": "WA", "Bushfires": 220},
+          {"Year": 2013, "State": "WA", "Bushfires": 230},
+          {"Year": 2014, "State": "WA", "Bushfires": 240},
+          {"Year": 2015, "State": "WA", "Bushfires": 250},
+          {"Year": 2016, "State": "WA", "Bushfires": 260},
+          {"Year": 2017, "State": "WA", "Bushfires": 270},
+          {"Year": 2018, "State": "WA", "Bushfires": 280},
+          {"Year": 2019, "State": "WA", "Bushfires": 290},
+          {"Year": 2020, "State": "WA", "Bushfires": 300}
+        ]
+      },
+      "params": [
+        {
+          "name": "state_filter",
+          "value": "All",
+          "bind": {
+            "input": "select",
+            "options": ["All", "VIC", "NSW", "SA", "WA"],
+            "name": "Filter by State"
+          }
+        }
+      ],
+      "transform": [
+        {
+          "filter": "state_filter === 'All' || datum.State === state_filter"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "point": true  // Adds points on the line chart
+      },
+      "encoding": {
+        "x": {
+          "field": "Year",
+          "type": "ordinal",  // Show years as categories (discrete values)
+          "axis": {"title": "Year", "labelAngle": 0}  // Include year labels on the x-axis
+        },
+        "y": {
+          "field": "Bushfires",
+          "type": "quantitative",
+          "axis": {"title": "Number of Bushfires"}
+        },
+        "color": {"field": "State", "type": "nominal", "legend": {"title": "State"}},
+        "tooltip": [
+          {"field": "Year", "type": "ordinal", "title": "Year"},
+          {"field": "Bushfires", "type": "quantitative", "title": "Number of Bushfires"},
+          {"field": "State", "type": "nominal", "title": "State"}
+        ]
+      }
+    };
+
+    vegaEmbed('#bushfire_vis', bushfireSpec).then(function(result) {
+      console.log(result);
+    }).catch(console.error);
+  </script>
+
+</body>
+</html>
